@@ -36,13 +36,13 @@ Start by installing [Node.js]() to your machine. After you have finished install
 * Async utility module
 
 This has actually already been done for you, but if you want to do it yourself, enter terminal on your machine, navigate to the lambda_function folder from within your copy of PHP Picture Resizer that you downloaded earlier, then type the following command:
-'''
+```
 npm install aws-sdk gm async
-'''
+```
 Now open the image_resizer.js file within the lambda_function folder in the PHP Picture Resizer repository. find the "dstBucket" variable initialization and change "OUTPUT_BUCKET" to whatever you named your output bucket. Finally, zip up the image_resizer.js file and the node_modules folder into a single .zip file (ex. image_resizer.zip) using the following command:
-'''
+```
 zip -r image_resizer.zip /path/to/node_modules /path/to/image_resizer.js
-'''
+```
 
 ##### Creating the Lambda Execution Role in IAM
 Click on the **Services** dropdown in the upper-left corner and then click on **IAM** under the Security, Identity & (???) heading. Now click on **Roles** on the navbar to the left. Click **Create new role**. Find **AWS Lambda** from the list under AWS Service Role, and click the **Select** button next to it. Find the policy **AWSLambdaExecute**, check the box next to it, then click **Next Step**. Give the role a detailed name (such as 'lambda_execute_role'), then click **Create role**.
@@ -55,7 +55,7 @@ All that's left now is to give the lambda function the proper permission to exec
 
 ##### Add Execution Permission to Lambda Function
 Run the following command, substituting in your own information into all the angle-bracket spaces:
-'''
+```
 aws lambda add-permission \
 --function-name <my_function_name> \
 --region <my_region (probably: us-east-1)> \
@@ -65,7 +65,7 @@ aws lambda add-permission \
 --source-arn arn:aws:s3:::<my_input_bucket_name> \
 --source-account <bucket-owner-account-id (top right corner in AWS Management Console)> \
 --profile <Bucket-Master>
-'''
+```
 
 ##### Add Lambda Notification to S3 Bucket
 Click on the **Services** dropdown in the upper-left corner and then click on **S3** under the Storage heading. Click on your input bucket. Click the **Properties** tab. Click the **Events** box underneath Advanced Settings. Click **Add notification**. Give the event a name (such as lambda_notifier). Check the box next to **ObjectCreate (All)**. Select **Lambda Function** from the **Sent to** dropdown. Select your lambda funtion from the **Lambda** dropdown. Click **Save**.
