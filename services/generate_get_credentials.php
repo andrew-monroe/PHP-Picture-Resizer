@@ -1,4 +1,8 @@
 <?php
+  include_once '../config/my_config.php';
+?>
+
+<?php
   function file_key() {
     return $_GET['filekey'];
   }
@@ -67,4 +71,36 @@
 
     return json_encode(array('signed_get_url' => $signed_get_url), JSON_UNESCAPED_SLASHES);
   }
+?>
+
+
+<?php
+  $GET_file_key       = file_key();
+  $short_date         = short_date();
+  $long_date          = long_date();
+
+  $canonical_request  = canonical_request(  $config_access_key_id,
+                                            $GET_file_key,
+                                            $config_GET_bucket,
+                                            $short_date,
+                                            $long_date);
+
+  $string_to_sign     = string_to_sign(     $short_date,
+                                            $long_date,
+                                            $canonical_request);
+
+  $signing_key        = signing_key(        $config_secret_access_key,
+                                            $short_date);
+
+  $signature          = signature(          $string_to_sign,
+                                            $signing_key);
+
+  $signed_GET_url     = signed_GET_url(     $config_GET_bucket,
+                                            $GET_file_key,
+                                            $config_access_key_id,
+                                            $short_date,
+                                            $long_date,
+                                            $config_GET_expiration_time_limit,
+                                            $signature);
+  echo $signed_GET_url;
 ?>

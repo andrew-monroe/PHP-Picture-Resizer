@@ -8,14 +8,12 @@
   <script src="resources/js/jquery.iframe-transport.js"></script>
   <!-- The basic File Upload plugin -->
   <script src="resources/js/jquery.fileupload.js"></script>
-  <script src="resources/js/direct_to_s3.js"></script>
-  <script src="resources/js/react_to_dragover.js"></script>
+  <script src="assets/javascript.js"></script>
 
 
   <link rel="stylesheet" href="resources/css/bootstrap.min.css">
-  <link rel="stylesheet" href="resources/css/style.css">
   <link rel="stylesheet" href="resources/css/jquery.fileupload.css">
-  <link rel="stylesheet" href="resources/css/index.css">
+  <link rel="stylesheet" href="assets/styles.css">
 </head>
 
 <body class="col-xs-10 col-xs-offset-1">
