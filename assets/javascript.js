@@ -37,7 +37,7 @@ $(function() {
     done: function (event, data) {
       $('#progress').hide();
 
-      var aws_resized_image_key = 'resized-'+$('#file_upload').find('input[name=key]').val();
+      var aws_resized_image_key = 'modified-'+$('#file_upload').find('input[name=key]').val();
       $.ajax({
         url: "services/generate_get_credentials.php",
         type: 'GET',
