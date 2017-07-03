@@ -1,3 +1,4 @@
+.gitignore
 config/my_config.php
 lambda_function/my_image_resizer.js
 lambda_function/image_resizer.zip
