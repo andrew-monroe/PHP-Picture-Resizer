@@ -48,7 +48,7 @@ Enter terminal on your machine, navigate to the lambda_function folder from with
 ```
 npm install aws-sdk gm async
 ```
-Now open the image_resizer.js file within the lambda_function folder in the PHP Picture Resizer repository. Find the "dstBucket" variable initialization and change "OUTPUT_BUCKET" to whatever you named your output bucket. Finally, zip up the image_resizer.js file and the node_modules folder into a single .zip file (ex. image_resizer.zip) using the following command:
+Now open the **image_resizer.js** file within the **lambda_function** folder in the PHP Picture Resizer repository. Find the **dstBucket** variable initialization and change **"OUTPUT_BUCKET"** to whatever you named your output bucket. Finally, zip up the **image_resizer.js** file and the **node_modules** folder into a single .zip file (ex. image_resizer.zip) using the following command:
 ```
 zip -r image_resizer.zip /path/to/node_modules /path/to/image_resizer.js
 ```
@@ -84,7 +84,7 @@ aws lambda add-permission \
 --action "lambda:InvokeFunction" \
 --principal s3.amazonaws.com \
 --source-arn arn:aws:s3:::YOUR_INPUT_BUCKET_NAME \
---source-account BUCKET_OWNER_ACCOUNT_ID(found in top right corner in AWS Management Console, ex: 123412341234)> \
+--source-account BUCKET_OWNER_ACCOUNT_ID(found in top right corner in AWS Management Console, ex: 123412341234) \
 --profile IAM_PROFILE_NAME(ex. bucket_admin)
 ```
 
