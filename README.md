@@ -89,7 +89,7 @@ aws lambda add-permission \
 ```
 
 ##### Add Lambda Notification to S3 Bucket
-Return to the AWS Management Console. Click on the **Services** dropdown in the upper-left corner and then click on **S3** under the Storage heading. Click on your input bucket. Click the **Properties** tab. Click the **Events** box underneath Advanced Settings. Click **Add notification**. Give the event a name (such as lambda_notifier). Check the box next to **ObjectCreate (All)**. Select **Lambda Function** from the **Sent to** dropdown. Select your lambda funtion from the **Lambda** dropdown. Click **Save**.
+Return to the AWS Management Console. Click on the **Services** dropdown in the upper-left corner and then click on **S3** under the Storage heading. Click on your input bucket. Click the **Properties** tab. Click the **Events** box underneath Advanced Settings. Click **Add notification**. Give the event a name (such as lambda_notifier). Check the box next to **ObjectCreate (All)**. Select **Lambda Function** from the **Send to** dropdown. Select your lambda funtion from the **Lambda** dropdown. Click **Save**.
 
 ### Setting Up a PHP Server
 Lots of variety here. Probably look around for your PHP server implementation of choice and follow their instructions. For the purpose of this guide, the important things is just that you do this. For setting up a localhost server, I found [this guide](https://lukearmstrong.github.io/2016/12/setup-apache-mysql-php-homebrew-macos-sierra/) to be very helpful (I used the php70 instructions).
