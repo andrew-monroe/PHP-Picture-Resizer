@@ -63,7 +63,7 @@ aws lambda create-function \
 --region us-east-1 \
 --function-name <name-your-lambda-function-here> \
 --zip-file fileb://path/to/your/zipfile.zip \
---role <execution-role-arn> \
+--role <execution-role-arn(on the role's iam page)> \
 --handler <name-of-your-js-file-without-file-extension>.handler \
 --runtime nodejs6.10 \
 --profile <iam-profile-name> \
