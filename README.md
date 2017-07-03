@@ -3,13 +3,7 @@
 ## What does it do?
 This PHP Picture Reszier is a web-based picture resizer service that uses AWS to perform all of the heavy lifting. This service is unique because it allows the user to upload their files directly to a private AWS S3 bucket with all of the proper authentication, and then download those files from a separate private bucket after the resizing is complete, and it does all of this without the user uploading any files to your own local server. This makes the service quite easy to scale, as your server is only really responsible for generating the authentication for each file.
 
-Note on AWS setup: This software assumes that you have set up four basic components on AWS (I will explain how to do this later):
-1.  An input S3 bucket
-1.  An output S3 bucket
-1.  A Lambda function that takes a file from the input bucket, and then puts a resulting file in the output bucket.
-1.  An IAM user with full S3 access permissions.
-
-## How can I use this myself?
+## Start-To-Finish Guide to Setting This Up Yourself:
 There are three steps in setting up this service for your own personal use:
 1.  Make an AWS account, and set up an input S3 bucket, a lambda function to process the inputs, an output S3 bucket, and an IAM user with permission to access S3. (Explained further below)
 2.  Setup a PHP server to run your own code off of.
