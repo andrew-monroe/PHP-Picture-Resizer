@@ -21,7 +21,7 @@ Do this by entering your .aws directory (probably at: ~/.aws) and modify your co
 ```
 [bucket_admin]
 output = text
-region = us-east-1
+region = YOUR_REGION_CODE(ex: us-east-1)
 ```
 Now you need to modify your credentials file. Open it up with a text editor and add the following to the end using the Access key ID and Secret access key you were just provided:
 ```
@@ -33,7 +33,17 @@ aws_secret_access_key = YOUR_SECRET_ACCESS_KEY_HERE
 You can delete and regenerate these keys later if you need to, but it would probably be better to just put them somewhere safe.
 
 #### Creating the S3 Buckets
-Return to the AWS Management Console. Click on the **Services** dropdown in the upper-left corner and then click on **S3** under the Storage heading. Click **Create bucket**. Give your bucket a descriptive name (like 'image-input-bucket'), then click **Create**. Note: The bucket name must be unique; no two buckets are allowed to have the same name. Repeat this step again with a different name for your output bucket.
+Return to the AWS Management Console. Click on the **Services** dropdown in the upper-left corner and then click on **S3** under the Storage heading. Click **Create bucket**. Give your bucket a descriptive name (like 'image-input-bucket'), then click **Create**. Repeat this step again with a different name for your output bucket. Note: The bucket name must be unique; no two buckets are allowed to have the same name.
+
+##### Change the CORS Configuration on the Output Bucket
+After you have created your output bucket, select it from the menu on the **S3** page in the AWS Management Console. Go to the **Permissions** tab. Click on **CORS configuration**. Change the line that looks like 
+```
+    <AllowedHeader>Authorization</AllowedHeader>
+```
+to instead say
+```
+    <AllowedHeader>*</AllowedHeader>
+```
 
 #### Creating the Lambda Function
 To create the lambda function, we will start with writing the code the function will execute. AWS Lambda supports several languages for it's functions, but I have found Node.js to be the most painless.
@@ -48,7 +58,7 @@ Enter terminal on your machine, navigate to the lambda_function folder from with
 ```
 npm install aws-sdk gm async
 ```
-Now open the image_resizer.js file within the lambda_function folder in the PHP Picture Resizer repository. Find the "dstBucket" variable initialization and change "OUTPUT_BUCKET" to whatever you named your output bucket. Finally, zip up the image_resizer.js file and the node_modules folder into a single .zip file (ex. image_resizer.zip) using the following command:
+Now open the **image_resizer.js** file within the **lambda_function** folder in the PHP Picture Resizer repository. Find the **dstBucket** variable initialization and change **"OUTPUT_BUCKET"** to whatever you named your output bucket. Finally, zip up the **image_resizer.js** file and the **node_modules** folder into a single .zip file (ex. image_resizer.zip) using the following command:
 ```
 zip -r image_resizer.zip /path/to/node_modules /path/to/image_resizer.js
 ```
@@ -62,7 +72,7 @@ Open up your terminal and enter in the following command:
 aws lambda create-function \
 --region YOUR_REGION_CODE(ex: us-east-1) \
 --function-name YOUR_LAMBDA_FUNCTION_NAME(ex: lambda_image_resizer) \
---zip-file fileb://path/to/your/zipfile.zip \
+--zip-file fileb://path/to/your/zipfile.zip(ex: fileb://~/Documents/PHP-Picture-Resizer/lambda_function/image_resizer.zip) \
 --role EXECUTION_ROLE_ARN(on the role's iam page, ex: arn:aws:iam::123412341234:role/lambda_execution_role) \
 --handler NAME_OF_YOUR_JS_FILE.FUNCTION_TO_CALL_FROM_JS_FILE(ex: image_resizer.handler) \
 --runtime nodejs6.10 \
@@ -84,12 +94,12 @@ aws lambda add-permission \
 --action "lambda:InvokeFunction" \
 --principal s3.amazonaws.com \
 --source-arn arn:aws:s3:::YOUR_INPUT_BUCKET_NAME \
---source-account BUCKET_OWNER_ACCOUNT_ID(found in top right corner in AWS Management Console, ex: 123412341234)> \
+--source-account BUCKET_OWNER_ACCOUNT_ID(found in top right corner in AWS Management Console, ex: 123412341234) \
 --profile IAM_PROFILE_NAME(ex. bucket_admin)
 ```
 
 ##### Add Lambda Notification to S3 Bucket
-Return to the AWS Management Console. Click on the **Services** dropdown in the upper-left corner and then click on **S3** under the Storage heading. Click on your input bucket. Click the **Properties** tab. Click the **Events** box underneath Advanced Settings. Click **Add notification**. Give the event a name (such as lambda_notifier). Check the box next to **ObjectCreate (All)**. Select **Lambda Function** from the **Sent to** dropdown. Select your lambda funtion from the **Lambda** dropdown. Click **Save**.
+Return to the AWS Management Console. Click on the **Services** dropdown in the upper-left corner and then click on **S3** under the Storage heading. Click on your input bucket. Click the **Properties** tab. Click the **Events** box underneath Advanced Settings. Click **Add notification**. Give the event a name (such as lambda_notifier). Check the box next to **ObjectCreate (All)**. Select **Lambda Function** from the **Send to** dropdown. Select your lambda funtion from the **Lambda** dropdown. Click **Save**.
 
 ### Setting Up a PHP Server
 Lots of variety here. Probably look around for your PHP server implementation of choice and follow their instructions. For the purpose of this guide, the important things is just that you do this. For setting up a localhost server, I found [this guide](https://lukearmstrong.github.io/2016/12/setup-apache-mysql-php-homebrew-macos-sierra/) to be very helpful (I used the php70 instructions).
