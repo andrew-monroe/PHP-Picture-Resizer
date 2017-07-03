@@ -106,7 +106,7 @@ function is_valid_url(url) {
       dataType: "json",
       async: false,
       complete: function(xhr, textStatus) {
-        is_valid = parseInt(xhr.status) < 400;
+        is_valid = parseInt(xhr.status) == 200;
         console.log("status:"+xhr.status);
         console.log(xhr.status);
       }
