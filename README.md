@@ -33,7 +33,17 @@ aws_secret_access_key = YOUR_SECRET_ACCESS_KEY_HERE
 You can delete and regenerate these keys later if you need to, but it would probably be better to just put them somewhere safe.
 
 #### Creating the S3 Buckets
-Return to the AWS Management Console. Click on the **Services** dropdown in the upper-left corner and then click on **S3** under the Storage heading. Click **Create bucket**. Give your bucket a descriptive name (like 'image-input-bucket'), then click **Create**. Note: The bucket name must be unique; no two buckets are allowed to have the same name. Repeat this step again with a different name for your output bucket.
+Return to the AWS Management Console. Click on the **Services** dropdown in the upper-left corner and then click on **S3** under the Storage heading. Click **Create bucket**. Give your bucket a descriptive name (like 'image-input-bucket'), then click **Create**. Repeat this step again with a different name for your output bucket. Note: The bucket name must be unique; no two buckets are allowed to have the same name.
+
+##### Change the CORS Configuration on the Output Bucket
+After you have created your output bucket, select it from the menu on the **S3** page in the AWS Management Console. Go to the **Permissions** tab. Click on **CORS configuration**. Change the line that looks like 
+```
+    <AllowedHeader>Authorization</AllowedHeader>
+```
+to instead say
+```
+    <AllowedHeader>*</AllowedHeader>
+```
 
 #### Creating the Lambda Function
 To create the lambda function, we will start with writing the code the function will execute. AWS Lambda supports several languages for it's functions, but I have found Node.js to be the most painless.
