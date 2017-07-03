@@ -21,7 +21,7 @@ Do this by entering your .aws directory (probably at: ~/.aws) and modify your co
 ```
 [bucket_admin]
 output = text
-region = us-east-1
+region = YOUR_REGION_CODE(ex: us-east-1)
 ```
 Now you need to modify your credentials file. Open it up with a text editor and add the following to the end using the Access key ID and Secret access key you were just provided:
 ```
@@ -72,7 +72,7 @@ Open up your terminal and enter in the following command:
 aws lambda create-function \
 --region YOUR_REGION_CODE(ex: us-east-1) \
 --function-name YOUR_LAMBDA_FUNCTION_NAME(ex: lambda_image_resizer) \
---zip-file fileb://path/to/your/zipfile.zip \
+--zip-file fileb://path/to/your/zipfile.zip(ex: fileb://~/Documents/PHP-Picture-Resizer/lambda_function/image_resizer.zip) \
 --role EXECUTION_ROLE_ARN(on the role's iam page, ex: arn:aws:iam::123412341234:role/lambda_execution_role) \
 --handler NAME_OF_YOUR_JS_FILE.FUNCTION_TO_CALL_FROM_JS_FILE(ex: image_resizer.handler) \
 --runtime nodejs6.10 \
