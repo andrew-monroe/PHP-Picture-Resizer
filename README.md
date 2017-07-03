@@ -1,7 +1,7 @@
 # Lightweight Web-Based Picture Resizer Service
 
 ## What does it do?
-This PHP Picture Reszier is a web-based picture resizer service that uses AWS to perform all of the heavy lifting. This service is unique because it allows the user to upload their files directly to a private AWS S3 bucket with all of the proper authentication, and then download those files from a separate private bucket after the resizing is complete, and it does all of this without the user uploading any files to your own server. This makes the service quite easy to scale, as your server is only really responsible for generating the authentication for each file.
+This PHP Picture Reszier is a web-based picture resizer service that uses AWS to perform all of the heavy lifting. This service is unique because it allows the user to upload their files directly to a private AWS S3 bucket with all of the proper authentication, and then download those files from a separate private bucket after the resizing is complete, and it does all of this without the user uploading any files to your own local server. This makes the service quite easy to scale, as your server is only really responsible for generating the authentication for each file.
 
 Note on AWS setup: This software assumes that you have set up four basic components on AWS (I will explain how to do this later):
 1.  An input S3 bucket
@@ -21,7 +21,22 @@ There are three steps in setting up this service for your own personal use:
 If you don't already have an AWS account, go ahead and do that first. The free tier should be enough for most people. Then follow the instructions [here](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) to install the AWS Command Line Interface. Also install this repository if you haven't already done that. You'll need it later.
 
 #### Creating an IAM User
-Once you have your AWS account, go ahead and begin by opening up the **[AWS Management Console](https://aws.amazon.com/console/)** and logging in to your account. Click on the **Services** dropdown in the upper-left corner and then click on **IAM** under the Security, Identity & (???) heading. Next, click **Users** on the navbar to the left. At the top, click **Add user** to begin creating a new user. Give the user a descriptive name (like 'Bucket-Master' or something interesting like that), then click **Next: Permissions**. The user will only need one policy, so let's just attach it directly. Click **Attach existing policies directly** then search for **AmazonS3FullAccess**, check the box next to it. Click **Next: Review**. Look over the review to make sure everything looks correct, then click **Create user**. On the next page you should see the Access key ID and Secret access key for the new user. Record both of these somewhere safe away from prying eyes where you can get to them later. You can delete and regenerate these keys later if you need to, but it would probably be better to just put them somewhere safe.
+Once you have your AWS account, go ahead and begin by opening up the **[AWS Management Console](https://aws.amazon.com/console/)** and logging in to your account. Click on the **Services** dropdown in the upper-left corner and then click on **IAM** under the Security, Identity & (???) heading. Next, click **Users** on the navbar to the left. At the top, click **Add user** to begin creating a new user. Give the user a descriptive name (like 'Bucket-Master' or something interesting like that), then check the box next to **Programatic Access** to ensure your you can use this user through the terminal. Click **Next: Permissions**. The user will only need two policies, so let's attach them directly. Click **Attach existing policies directly** then search for **AmazonS3FullAccess**, check the box next to it. Next search for **AdministratorAccess** and check the box next to that one. Click **Next: Review**. Look over the review to make sure everything looks correct, then click **Create user**. On the next page you should see the Access key ID and Secret access key for the new user. You now need to configure your AWS CLI interface to use this user.
+
+Do this by entering your .aws directory (probably at: ~/.aws) and modify your config file with a text editor to add the following (using your own user's name and region):
+```
+[Bucket-Master]
+output = text
+region = us-east-1
+```
+Now you need to modify your credentials file. Open it up with a text editor and add the following to the end using the Access key ID and Secret access key you were just provided:
+```
+[Bucket-Master]
+aws_access_key_id = <access-key-id>
+aws_secret_access_key = <secret-access-key>
+```
+
+You can delete and regenerate these keys later if you need to, but it would probably be better to just put them somewhere safe.
 
 #### Creating the S3 Buckets
 Click on the **Services** dropdown in the upper-left corner and then click on **S3** under the Storage heading. Click **Create bucket**. Give your bucket a descriptive name (like 'image-input-bucket'), then click **Create**. Note: The bucket name must be unique; no two buckets are allowed to have the same name. Repeat this step again with a different name for your output bucket.
@@ -48,7 +63,19 @@ zip -r image_resizer.zip /path/to/node_modules /path/to/image_resizer.js
 Click on the **Services** dropdown in the upper-left corner and then click on **IAM** under the Security, Identity & (???) heading. Now click on **Roles** on the navbar to the left. Click **Create new role**. Find **AWS Lambda** from the list under AWS Service Role, and click the **Select** button next to it. Find the policy **AWSLambdaExecute**, check the box next to it, then click **Next Step**. Give the role a detailed name (such as 'lambda_execute_role'), then click **Create role**.
 
 ##### Creating the Lambda Function on AWS
-Click on the **Services** dropdown in the upper-left corner and then click on **Lambda** under the Compute heading. Click **Create a Lambda function**. Click **Blank Function** as your blueprint. Click in the dashed-outline square, then select **S3** from the dropdown that appeared. For Bucket, click the dropdown and select your input bucket from the list. For Event type, go ahead and select **Object Created (All)**. Click **Next**. For the **Name** field, give your function a descriptive name (such as 'image_resizer'). For the **Runtime** field, select **Node.js 6.10**. For the **Code entry type** field, select **Upload a .ZIP file**, then upload the .zip file you created earlier. For the **Handler** field, input **\<name_of_js_file>.handler** (such as image_resizer.handler). For the **Role** field, select **Choose an existing role**. For the **Existing role** field, select the lambda execution IAM role you built ealier. Now click **Next**. Review the function to make sure everything seems correct, then click **Create function**.
+Open up your terminal and enter in the following command:
+```
+aws lambda create-function \
+--region us-east-1 \
+--function-name <name-your-lambda-function-here> \
+--zip-file fileb://path/to/your/zipfile.zip \
+--role <execution-role-arn> \
+--handler <name-of-your-js-file-without-file-extension>.handler \
+--runtime nodejs6.10 \
+--profile <iam-profile-name> \
+--timeout 10 \
+--memory-size 1024
+```
 
 #### Add the Event Source
 All that's left now is to give the lambda function the proper permission to execute on an S3 event, and to tell our input bucket to notify the lambda function whenever an object is placed in it.
@@ -75,6 +102,6 @@ Lots of variety here. Probably look around for your PHP server implementation of
 
 ### Installing and Configuring the PHP Picture Resizer
 You're almost done!
-Open up the config.php file within the config folder and change all of the information within to match all of your own AWS information. If you need a new AWS Access Key ID and AWS Secret Access Key you can always do it from within IAM in the AWS Management Console. Just open up the **Users** page from the navbar on the left, click on your the equivalent of your 'Bucket-Master' user, navigate to the **Security credentials** tab, then use **Create access key** to your heart's content!
+Open up the config.php file within the config folder and change all of the information within to match all of your own AWS information. Just open up the **Users** page from the navbar on the left, click on your the equivalent of the 'Bucket-Master' user, navigate to the **Security credentials** tab, then use **Create access key** to your heart's content!
 
 Now just transfer your PHP Picture Resizer repository onto your PHP server, and you should be good to go! Try it out!
